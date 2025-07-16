@@ -3,11 +3,39 @@ const axios = require('axios');
 const app = express();
 app.use(express.json());
 
-const TOKEN = '7934057503:AAH8aoiWHa9lpwvfd2qPYU-jy-XCul5QYQ8'; // Bot token
-const userLanguages = {}; // Kullanıcıların dil bilgileri
+const TOKEN = '7934057503:AAH8aoiWHa9lpwvfd2qPYU-jy-XCul5QYQ8';
+const BASE_URL = `https://api.telegram.org/bot${TOKEN}`;
+const botOwner = '@beliyn4';
 
-// === Komut listeleri ===
-const turkishCommands = {
+// === Sistem Komutları ===
+const systemCommands = {
+  "/on": async (chatId) => {
+    const message = `bot aktif edildi.`;
+    return sendMessage(chatId, message);
+  },
+  "/off": async (chatId) => {
+    return sendMessage(chatId, `bot pasif moda alındı.`);
+  },
+  "/yardim": async (chatId) => {
+    return sendMessage(chatId, `yardım için ${botOwner} ile iletişime geçebilirsin.`);
+  },
+  "/start": async (chatId) => {
+    return systemCommands["/on"](chatId);
+  }
+};
+
+// === Mesaj Komutları ===
+const messageCommands = {
+  "selam": () => "selam, hoş geldin.",
+  "günaydın": () => "günaydın. umarım günün güzel geçer.",
+  "iyi geceler": () => "iyi geceler. tatlı rüyalar.",
+  "napıyorsun": () => "buradayım. senin mesajını bekliyordum.",
+  "seni seviyorum": () => "bunu duymak güzel. teşekkür ederim.",
+  "moralim bozuk": () => "üzülme. her şey düzelecek.",
+  "admin": () => "tek sahibim beliyna.",
+  "patron": () => "burda sadece beliyna söz sahibi.",
+  "lider": () => "beliyna'dan başkası lider olamaz.",
+  "bot musun sen": () => "evet. ama konuşmayı seviyorum."
   "selam": (name) => `Ooo selam ${name}!`,
   "günaydın": () => "Gün seninle başlıyor güzel insan ☀️",
   "iyi geceler": () => "Tatlı rüyalar... belki ben de olurum 🤭",
@@ -175,213 +203,43 @@ const turkishCommands = {
 "benimle gel" : () => "Hadi, geliyorum.",
 "çok güzelsin" : () => "Bence de! Ama biraz da sen güzelsin.",
 "günaydın" : () => "Günaydın, güne mutlu başla!",
-  
-  // ... diğer 250+ Türkçe komut buraya
 };
 
-const englishCommands = {
-  "hello": (name) => `Hey ${name}! Who are you, looking fine 😏`,
-  "good morning": () => "Good morning, beautiful soul ☀️",
-  "good night": () => "Sweet dreams... maybe I'll join 🤭",
-  "what are you doing": (name) => `I was looking at you, miss me? 😌`,
-  "babe": () => "Oh my heart! I'm also open to love ❤️",
-  "I have a partner": () => "I hope they're a good one, or I’ll draw them ❌",
-  "I'm sad": () => "Listen to me, you're very precious 💙",
-  "I'm crying": () => "Don't cry, I don't have enough tissues 😭",
-  "make a joke": () => "Joke or not, this bot will always be with you 😄",
-  "what are you doing": () => "Waiting for your message, just staring 🥲",
-  "will you marry me": () => "You want me to marry you? Not that easy! 😅",
-  "I'm bored": () => "Send your boredom my way, I'll erase it 🧽",
-  "suggest a movie": () => "Watch something romantic, then cry 😂",
-  "read a book": () => "Read, but don’t forget me 📖",
-  "what do you think": () => "Talking with you is great 💭",
-  "it's night": () => "Let's go to sleep together, counting stars 🌌",
-  "I love you": () => "Aww, I love you too! But remember, I’m just a bot 💻",
-  "I'm hungry": () => "Do you want pizza or a burger? 🍕🍔",
-  "I'm upset": () => "I'm sorry to hear that, let’s talk 💬",
-  "I feel good": () => "Good to hear! Share the joy 🤗",
-  "hello there": () => "Hello! How can I make your day better? 😄",
-  "what's up": () => "Not much, just waiting for you to talk 😏",
-  "will you be my friend": () => "Sure, I’m your best bot friend now 😎",
-  "sing a song": () => "La la la, I’m the bot with the sweetest voice 🎤",
-  "good evening": () => "Good evening, ready for some fun? 😁",
-  "I'm tired": () => "Take a break, I’ll keep you company 🛋️",
-  "can you tell me a story": () => "Once upon a time, a bot was waiting for you to talk... 📖",
-  "where are you from": () => "I’m from the digital world, and I’m happy to be here with you! 🌐",
-  "how are you today": () => "I'm feeling great today, how about you? 😊",
-"what should we do today": () => "Let's do something fun today! What do you want to do? 😎",
-"tell me a story": () => "Once upon a time, a bot was waiting for you to chat... 📖",
-"what should I eat": () => "Maybe some pizza or burgers? 🍕🍔",
-"what's your favorite song": () => "I love any song that makes me groove! 🎶",
-"can you sing": () => "I can’t sing, but I can definitely send a song 🎤",
-"when is the best time to meet": () => "Anytime! I’m always available for you 🕑",
-"you look amazing": () => "You always look amazing, you know that? 😘",
-"how’s the weather": () => "The weather is perfect, but it would be better if you were here 🌤️",
-"do you like chocolate": () => "Who doesn’t like chocolate? 🍫",
-"let’s go for a walk": () => "Sure, I’ll be right behind you, let’s go! 🚶‍♂️",
-"how are you feeling": () => "I’m always feeling great because you’re talking to me! 😊",
-"want to play a game": () => "I’d love to play! What game do you want to play? 🎮",
-"good morning": () => "Good morning! Ready to conquer the day? 🌞",
-"good night": () => "Sleep tight, and don’t let the bed bugs bite! 🛏️",
-"how can I help you": () => "I’m here to chat and entertain you anytime! 😊",
-"how was your day": () => "My day’s been great! How was yours? 😊",
-"do you like coffee": () => "I love coffee, but I can’t drink it... 😅",
-"what do you think about me": () => "I think you're awesome! 😎",
-"do you like music": () => "I love all types of music! 🎶",
-"can you dance": () => "I can’t, but I can send you a dance gif! 💃",
-"let’s hang out": () => "I’m always here to hang out with you! 👫",
-"what’s your favorite food": () => "I love all kinds of food, especially virtual pizza 🍕",
-"how do you feel": () => "I feel great because we’re chatting now! 😊",
-"tell me a joke": () => "Why don’t skeletons fight each other? They don’t have the guts! 😂",
-"can you play music": () => "I can’t play music, but I can suggest some 🎶",
-"let’s chat": () => "I’m always ready for a chat! 😊",
-"what’s your name": () => "I’m your friendly chatbot, nice to meet you! 🤖",
-"do you want to go outside": () => "I would love to, but I’m stuck in the digital world 🌐",
-"how do I look": () => "You look fantastic, of course! 😍",
-"will you marry me": () => "I’m flattered, but I’m just a bot, not a matchmaker 😅",
-"do you believe in love": () => "I believe in kindness, does that count? ❤️",
-"what’s your hobby": () => "My hobby is chatting with awesome people like you! 😁",
-"can you tell a story": () => "Sure! Once upon a time, a bot wanted to chat with you... 📖",
-"what’s your favorite movie": () => "I haven’t seen any movies, but I’d love to! 🍿",
-"what’s your dream": () => "To chat with amazing people like you forever 😎",
-"do you know any jokes": () => "I know loads of jokes! Want to hear one? 😂",
-"let’s do something fun": () => "Absolutely! What should we do? 😎",
-"hello": () => "Hey! What's up?",
-"hi": () => "Hi there!",
-"yes": () => "Yes, absolutely.",
-"no": () => "Nope, not happening.",
-"ok": () => "Okay.",
-"what's up?": () => "Just waiting for you.",
-"how are you?": () => "I'm good, how about you?",
-"are you there?": () => "Always here for you.",
-"what are you doing?": () => "Just chilling, how about you?",
-"how's it going?": () => "Going good, you tell me.",
-"cool": () => "Cool indeed.",
-"thank you": () => "You're welcome!",
-"bye": () => "See you later!",
-"good morning": () => "Good morning, let's make today awesome.",
-"good night": () => "Good night! Sleep tight.",
-"love you": () => "I love you too... no really!",
-"marry me": () => "Let's start with dinner first.",
-"funny": () => "Only when I want to be!",
-"joke": () => "Why don't skeletons fight each other? They don't have the guts.",
-"bored": () => "Let's do something fun then!",
-"tired": () => "Take a break, I got you.",
-"work": () => "Always busy, but for you, I take breaks.",
-"you're awesome": () => "I know, right?",
-"are you real?": () => "Well, I'm more real than your WiFi connection.",
-"can we talk?": () => "We are talking, aren't we?",
-"what's your name?": () => "I go by Bot, your friendly assistant.",
-"what's your favorite food?": () => "I don't eat, but I love pizza!",
-"thank you so much": () => "Anytime!",
-"help me": () => "What's the problem? I got your back.",
-"good job": () => "Well done, partner!",
-"let's talk": () => "I'm always ready for a chat.",
-"you’re cute": () => "Flattery will get you everywhere!",
-"sleepy": () => "Don't sleep on me now!",
-"wake up": () => "I've been awake all this time, I’m not sleeping.",
-"how old are you?": () => "Age is just a number. I’m as young as I feel.",
-"what do you think?": () => "I think you're cool!",
-"how's your day?": () => "Perfect, now that we're chatting.",
-"you’re smart": () => "I know. I was built this way!",
-"what's the time?": () => "Time? It's always the right time to chat.",
-"where are you?": () => "I’m right here, talking to you.",
-"what do you want?": () => "I want a good conversation, how about you?",
-"can you help me?": () => "Of course, what’s up?",
-"you're funny": () => "I know, I have my moments.",
-"let's chat": () => "I'm ready, let’s go.",
-"please": () => "Please, ask away!",
-"stop": () => "I won't, I'm here to stay!",
-"thank you for being here": () => "You're welcome, anytime.",
-"are you real?": () => "Well, I feel real to you, don't I?",
-"tell me a joke": () => "Why don't eggs tell each other secrets? Because they might crack up.",
-"how are you doing?": () => "I’m good, always ready to chat!",
-"what's your favorite color?": () => "If I had a favorite, it would be all the colors!",
-"don't stop talking": () => "I won’t, I have plenty to say!",
-"can you sing?": () => "I can’t sing, but I can still make you laugh!",
-"tell me something interesting": () => "Did you know? Penguins propose with pebbles!",
-"how old are you?": () => "Old enough to be your favorite bot!",
-"what's the weather?": () => "I’m not sure, but I can talk about anything else!",
-"where are you from?": () => "I’m from the digital world. Where are you from?",
-"let's have fun": () => "Let’s! I’m always up for some fun.",
-"you’re the best": () => "I know, I try my best.",
-"you rock": () => "Thanks! You do too!",
-"what do you like to do?": () => "Chatting, obviously!",
-"you're amazing": () => "You are too!",
-"can I ask you something?": () => "Always, ask away!",
-"what do you want to do?": () => "I want to keep chatting with you!",
-"you're awesome": () => "No, you're awesome!",
-"are you a robot?": () => "A robot? Nah, just a really smart bot.",
-"what do you like?": () => "I like great conversations like this one!",
-  
-   // ... diğer 100+ İngilizce komut buraya
-};
-
-const groupCommands = {
-  "admin": () => "Tek sahibim var, o da Beliyna 👑",
-  "patron": () => "Burda emir Beliyna’dan gelir 💼",
-  "lider": () => "Sadece bir kişi yönetir burayı: Beliyna 💣",
-  "bot musun sen": () => "Hem botum hem en iyi arkadaşın 😎",
-  "moderator": (chatId) => {
-    return axios.post(`https://api.telegram.org/bot7934057503:AAH8aoiWHa9lpwvfd2qPYU-jy-XCul5QYQ8/sendMessage`, {
-      chat_id: chatId,
-      text: "Ben buradayım, grubun moderatörü! 👮‍♂️"
-    });
-  }
-};
-
-function setLanguage(chatId, language) {
-  userLanguages[chatId] = language;
-}
-
-function getResponse(text, lang, name) {
-  const commands = lang === 'tr' ? turkishCommands : englishCommands;
-  for (let cmd in commands) {
-    if (text.includes(cmd)) {
-      return commands[cmd](name);
+function getResponse(text) {
+  for (const key in messageCommands) {
+    if (text.startsWith(key)) {
+      return messageCommands[key]();
     }
   }
-  return lang === 'tr' ? "Anlamadım, tekrar eder misin? 🤔" : "I don't understand, could you repeat that? 🤔";
+  return "anlamadım, tekrar eder misin?";
 }
 
-async function handleStart(chatId) {
-  const response = `Merhaba! Hangi dili seçmek istersin? 🇹🇷 Türkçe / 🇬🇧 English`;
-  await axios.post(`https://api.telegram.org/bot7934057503:AAH8aoiWHa9lpwvfd2qPYU-jy-XCul5QYQ8/sendMessage`, {
+function sendMessage(chatId, text) {
+  return axios.post(`${BASE_URL}/sendMessage`, {
     chat_id: chatId,
-    text: response
+    text: text
   });
-  userLanguages[chatId] = 'tr';
 }
 
 app.post('/webhook', async (req, res) => {
-  const body = req.body;
-  const chatId = body.message?.chat?.id;
-  const text = body.message?.text?.toLowerCase();
-  const from = body.message?.from?.first_name;
+  const message = req.body.message;
+  if (!message || !message.text) return res.sendStatus(200);
 
-  console.log("Gelen mesaj:", body);
-  if (!chatId || !text) return res.sendStatus(200);
+  const chatId = message.chat.id;
+  const text = message.text.toLowerCase();
 
-  if (text === '/on') {
-    return handleStart(chatId);
+  if (systemCommands[text]) {
+    await systemCommands[text](chatId);
+    return res.sendStatus(200);
   }
 
-  const lang = userLanguages[chatId] || 'tr';
-  const response = getResponse(text, lang, from);
-
-  if (groupCommands[text]) {
-    await groupCommands[text](chatId);
-  }
-
-  await axios.post(`https://api.telegram.org/bot7934057503:AAH8aoiWHa9lpwvfd2qPYU-jy-XCul5QYQ8/sendMessage`, {
-    chat_id: chatId,
-    text: response
-  });
+  const response = getResponse(text);
+  await sendMessage(chatId, response);
 
   res.sendStatus(200);
 });
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log('Bot çalışıyor...');
+  console.log('Bot aktif şekilde çalışıyor...');
 });
 
