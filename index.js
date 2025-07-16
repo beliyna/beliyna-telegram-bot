@@ -26,7 +26,6 @@ const systemCommands = {
 
 // === Mesaj Komutları ===
 const messageCommands = {
-  "selam": () => "selam, hoş geldin.",
   "günaydın": () => "günaydın. umarım günün güzel geçer.",
   "iyi geceler": () => "iyi geceler. tatlı rüyalar.",
   "napıyorsun": () => "buradayım. senin mesajını bekliyordum.",
@@ -35,7 +34,7 @@ const messageCommands = {
   "admin": () => "tek sahibim beliyna.",
   "patron": () => "burda sadece beliyna söz sahibi.",
   "lider": () => "beliyna'dan başkası lider olamaz.",
-  "bot musun sen": () => "evet. ama konuşmayı seviyorum."
+  "bot musun sen": () => "evet. ama konuşmayı seviyorum.",
   "selam": (name) => `Ooo selam ${name}!`,
   "günaydın": () => "Gün seninle başlıyor güzel insan ☀️",
   "iyi geceler": () => "Tatlı rüyalar... belki ben de olurum 🤭",
