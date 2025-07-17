@@ -31,6 +31,8 @@ const systemCommands = {
 const messageCommands = {
   "kanka": () => "bot olmasaydım kanka olurduk",
   "bot musun": () => "hayır ben beliyna'nın eseriyim",
+  "kanka": () => "bot olmasaydım kanka olurduk",
+  "bot musun": () => "hayır ben beliyna'nın eseriyim",
   "sus": () => "susmıycam",
   "susar mısın": () => "susmam hahahaha",
   "aq": () => "gereksiz egona sokayım",
@@ -414,12 +416,84 @@ const messageCommands = {
   "uzak dur": () => "Neden? bir şey yapmam, merak etme",
   "yakışır": () => "Hep sana yakıştı 💖",
   "merhaba": () => "Hoşgeldin Bu Gün Neredeydin 😏",
+  "beliyna": () => "Beliyna gerçekten en iyisi!",
+  "beliyna çok güzel": () => "Evet, Beliyna bir tanedir, güzellikte eşsiz!",
+
+  // Yeni Komutlar
+
+  // 1. Otomatik Selamlama
+  "newUser": (username) => `@${username} gruba katıldı → hoşgeldin`,
+
+  // 2. Zaman Tepkileri
+  "09:00": () => "uyan artık",
+  "22:00": () => "yatma vaktin geldi",
+  "01:00": () => "hala burda mısın cidden?",
+
+  // 3. Belirli Kelimeye Cevap (Gizli Tetikleyici)
+  "acıktım": () => "bi doyuramadık seni",
+
+  // 4. Sahibin Adının Geçmesi
+  "beliyna": () => "Övünmek Gibi Olmasın Benim Sahibim 🤭",
+
+  // 5. Küfür Filtresi (Gizli Uyarı)
+  "amk": () => "terbiyesizz",
+  "aq": () => "egolu oe",
+  "beliynanın amk": () => "ananı yurdunu s1keyim oe",
+
+  // 6. Sessize Alma Komutu (admin'e özel)
+  "/susla": async (chatId, username) => {
+    if (isAdmin(chatId)) {
+      return sendMessage(chatId, `@${username} sustu.`);
+    }
+    return sendMessage(chatId, `Yalnızca yöneticiler bu komutu kullanabilir.`);
+  },
+
+  // 7. Övgü İsteği
+  "/öv": () => {
+    const compliments = [
+      "şanslısın çünkü burdasın",
+      "bugün çok sexi gözüküyorsun",
+      "beliyna bile seni sever belki"
+    ];
+    return compliments[Math.floor(Math.random() * compliments.length)];
+  },
+
+  // 8. Beni Eğlendir Komutu
+  "/eğlendir": () => {
+    const jokes = [
+      "sen zaten eğlencesin",
+      "senleyken eğlenmeye gerek kalmıyor"
+    ];
+    return jokes[Math.floor(Math.random() * jokes.length)];
+  },
+
+  // 9. Anket Komutu
+  "/anket": async (chatId, title, option1, option2) => {
+    return sendMessage(chatId, `Anket Başlığı: ${title}\nSeçenekler:\n1. ${option1}\n2. ${option2}`);
+  },
+
+  // 10. Kullanıcıya Takılma Özelliği
+  "lafAt": async (chatId, users) => {
+    const randomUser = users[Math.floor(Math.random() * users.length)];
+    return sendMessage(chatId, `@${randomUser} ne çok konuştun bea`);
+  }
 };
 
-function getResponse(text) {
+// Kullanıcıyı admin olarak kontrol etme
+function isAdmin(chatId) {
+  // Admin kontrol işlemi burada yapılacak
+  return true; // örnek olarak her zaman admin varsayıldı
+}
+
+function getResponse(text, chatId) {
+  // Yeni kullanıcıya otomatik mesaj göndermek için kontrol
+  if (text.includes("gruba katıldı")) {
+    return messageCommands["newUser"](text.replace('@', '')); // newUser komutu
+  }
+
   for (const key in messageCommands) {
     if (text.includes(key)) {
-      return messageCommands[key]();
+      return messageCommands[key](chatId);
     }
   }
   return null; // Tanımsız komut varsa cevap verme
@@ -439,14 +513,15 @@ app.post('/webhook', async (req, res) => {
   const chatId = message.chat.id;
   const text = message.text.toLowerCase();
 
+  // Bot aktif değilse, komut işlenmesin
+  if (!botActive) return res.sendStatus(200);
+
   if (systemCommands[text]) {
     await systemCommands[text](chatId);
     return res.sendStatus(200);
   }
 
-  if (!botActive) return res.sendStatus(200);
-
-  const response = getResponse(text);
+  const response = getResponse(text, chatId);
   if (response) {
     await sendMessage(chatId, response);
   }
@@ -457,4 +532,5 @@ app.post('/webhook', async (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log('Bot aktif şekilde çalışıyor...');
 });
+
 
