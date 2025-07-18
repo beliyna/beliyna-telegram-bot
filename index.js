@@ -1,35 +1,75 @@
-const express = require('express');
-const axios = require('axios');
-const app = express();
-app.use(express.json());
+const TelegramBot = require("node-telegram-bot-api");
 
-const TOKEN = '7934057503:AAH8aoiWHa9lpwvfd2qPYU-jy-XCul5QYQ8';
-const BASE_URL = `https://api.telegram.org/bot${TOKEN}`;
-const botOwner = '@beliyn4';
+const token = "7934057503:AAH8aoiWHa9lpwvfd2qPYU-jy-XCul5QYQ8; // Buraya kendi bot token'ını yaz
+const bot = new TelegramBot(token, { polling: true });
 
 let botActive = true;
 
-// === Sistem Komutları ===
-const systemCommands = {
-  "/on": async (chatId) => {
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const commands = {
+  "/on": async (msg) => {
     botActive = true;
-    return sendMessage(chatId, `bot aktif edildi.`);
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "sohbet başarılıyla başlatıldı");
   },
-  "/off": async (chatId) => {
+  "/off": async (msg) => {
     botActive = false;
-    return sendMessage(chatId, `bot pasif moda alındı.`);
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "hoşça kal");
   },
-  "/yardim": async (chatId) => {
-    return sendMessage(chatId, `yardım için ${botOwner} ile iletişime geçebilirsin.`);
+  "/banla": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "banlandı");
   },
-  "/start": async (chatId) => {
-    return systemCommands["/on"](chatId);
+  "/susla": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "tamam susturdum");
+  },
+  "/öv": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "seninle konuşmak komutlarımın en iyi özelliğiydi");
+  },
+  "/eğlendir": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "bir gün herkes senin gibi eğlenceli olur mu?");
+  },
+  "/itiraf": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "sana biraz fazla bağlandım");
+  },
+  "/dedikodu": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "olmaz sohbette dönenleri bir ben biliyorum bir de beliyna");
+  },
+  "/fal": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "yakında biri hayatına girecek... belki de çoktan girdi bile");
+  },
+  "/zihinoku": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "şu an bunu okurken gülümsüyorsun, doğru mu?");
+  },
+  "/romantik": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "birlikte gökyüzüne bakmayı isterdim");
+  },
+  "/bilgilerimisil": async (msg) => {
+    await typingEffect(msg);
+    bot.sendMessage(msg.chat.id, "pekala hoşçakal...");
+  },
+  "/anket": async (msg) => {
+    await typingEffect(msg);
+    bot.sendPoll(msg.chat.id, "Günün sorusu:", ["Evet", "Hayır"]);
   }
 };
 
-// === Mesaj Komutları ===
-const messageCommands = {
+const triggerWords = {
   "kanka": () => "bot olmasaydım kanka olurduk",
+  "belinay kimi seviyor": () => "o sadece beni sever",
+  "bot": () => "haha senin gibi aşk acısı çekmiyorum en azından",
   "bot musun": () => "hayır ben beliyna'nın eseriyim",
   "sus": () => "susmıycam",
   "susar mısın": () => "susmam hahahaha",
@@ -176,118 +216,53 @@ const messageCommands = {
   "birini özlüyorum": () => "yavaş ol, ben burada seni bekliyorum.",
   "bir şarkı söyle": () => "ama şarkı söylemek benim işim değil, sesim iyi değil!",
   "hello": () => "selamlar! ne var ne yok?",
-
-   // Yeni Komutlar
-
-  // 1. Otomatik Selamlama
-  "newUser": (username) => `@${username} gruba katıldı → hoşgeldin`,
-
-  // 2. Zaman Tepkileri
-  "09:00": () => "uyan artık",
-  "22:00": () => "yatma vaktin geldi",
-  "01:00": () => "hala burda mısın cidden?",
-
-  // 3. Belirli Kelimeye Cevap (Gizli Tetikleyici)
-  "acıktım": () => "bi doyuramadık seni",
-
-  // 4. Sahibin Adının Geçmesi
-  "beliyna": () => "Övünmek Gibi Olmasın Benim Sahibim 🤭",
-
-  // 5. Küfür Filtresi (Gizli Uyarı)
-  "amk": () => "terbiyesizz",
-  "aq": () => "egolu oe",
-  "beliynanın amk": () => "ananı yurdunu s1keyim oe",
-
-  // 6. Sessize Alma Komutu (admin'e özel)
-  "/susla": async (chatId, username) => {
-    if (isAdmin(chatId)) {
-      return sendMessage(chatId, `@${username} sustu.`);
-    }
-    return sendMessage(chatId, `Yalnızca yöneticiler bu komutu kullanabilir.`);
-  },
-
-  // 7. Övgü İsteği
-  "/öv": () => {
-    const compliments = [
-      "şanslısın çünkü burdasın",
-      "bugün çok sexi gözüküyorsun",
-      "beliyna bile seni sever belki"
-    ];
-    return compliments[Math.floor(Math.random() * compliments.length)];
-  },
-
-  // 8. Beni Eğlendir Komutu
-  "/eğlendir": () => {
-    const jokes = [
-      "sen zaten eğlencesin",
-      "senleyken eğlenmeye gerek kalmıyor"
-    ];
-    return jokes[Math.floor(Math.random() * jokes.length)];
-  },
-
-  // 9. Anket Komutu
-  "/anket": async (chatId, title, option1, option2) => {
-    return sendMessage(chatId, `Anket Başlığı: ${title}\nSeçenekler:\n1. ${option1}\n2. ${option2}`);
-  },
-
-  // 10. Kullanıcıya Takılma Özelliği
-  "lafAt": async (chatId, users) => {
-    const randomUser = users[Math.floor(Math.random() * users.length)];
-    return sendMessage(chatId, `@${randomUser} ne çok konuştun bea`);
-  }
+  "belinay su": () => (Math.random() < 0.5 ? "babasının ilk aşkı" : "babasına aşık olan bir minik"),
+  "belinayım": () => (Math.random() < 0.5 ? "belinay suyumun babası" : "kalbim"),
+  "beliynayı seviyorum": () => (Math.random() < 0.5 ? "beliyna evli" : "sadece kızının babasına aşık"),
+  "belinayı seviyorum": () => (Math.random() < 0.5 ? "belinay evli" : "sadece kızının babasına aşık"),
+  "selam": () => "as naber",
+  "b": () => "oo oe",
+  "mal mısın": () => "sen çok zekisin",
+  "iyi ben de": () => "sevindim",
+  "belinay kime aşık": () => "kızının babasına",
+  "beliyna kime aşık": () => "kızının babasına",
+  "iyi geceler": () => "good night",
+  "bebe": () => "bebem",
+  "bebem": () => "minnağım",
+  "iyi ki varsın": () => "sende birtanem",
+  "o kim": () => "o beliynanın köpeği",
+  "neler oldu": () => "sen bilmesen de olur",
+  "beliyna": () => "efendim",
+  "belinay": () => "ne var car car car konuşuyorsun",
+  "dost": () => "2019 tayfasını ceddinize değişmem",
+  "evli misin": () => "kocama sor @beliyna",
+  "hayat şaşırttır bazen": () => "sahibim kadar mı ahahahah",
+  "güzellik": () => "sahibimin yansıması",
+  "canım": () => "taze bitti canın ahahahah",
 };
 
-// Kullanıcıyı admin olarak kontrol etme
-function isAdmin(chatId) {
-  // Admin kontrol işlemi burada yapılacak
-  return true; // örnek olarak her zaman admin varsayıldı
+async function typingEffect(msg) {
+  await bot.sendChatAction(msg.chat.id, "typing");
+  await delay(1500);
 }
 
-function getResponse(text, chatId) {
-  // Yeni kullanıcıya otomatik mesaj göndermek için kontrol
-  if (text.includes("gruba katıldı")) {
-    return messageCommands["newUser"](text.replace('@', '')); // newUser komutu
-  }
+bot.onText(/\\/.+/, async (msg) => {
+  if (!botActive && msg.text !== "/on") return;
+  const commandFunc = commands[msg.text];
+  if (commandFunc) await commandFunc(msg);
+});
 
-  for (const key in messageCommands) {
+bot.on("message", async (msg) => {
+  if (!botActive) return;
+  const text = msg.text.toLowerCase();
+  for (const key in triggerWords) {
     if (text.includes(key)) {
-      return messageCommands[key](chatId);
+      await typingEffect(msg);
+      bot.sendMessage(msg.chat.id, triggerWords[key]());
+      break;
     }
   }
-  return null; // Tanımsız komut varsa cevap verme
-}
-
-function sendMessage(chatId, text) {
-  return axios.post(`${BASE_URL}/sendMessage`, {
-    chat_id: chatId,
-    text: text
-  });
-}
-
-app.post('/webhook', async (req, res) => {
-  const message = req.body.message;
-  if (!message || !message.text) return res.sendStatus(200);
-
-  const chatId = message.chat.id;
-  const text = message.text.toLowerCase();
-
-  // Bot aktif değilse, komut işlenmesin
-  if (!botActive) return res.sendStatus(200);
-
-  if (systemCommands[text]) {
-    await systemCommands[text](chatId);
-    return res.sendStatus(200);
-  }
-
-  const response = getResponse(text, chatId);
-  if (response) {
-    await sendMessage(chatId, response);
-  }
-
-  res.sendStatus(200);
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Bot aktif şekilde çalışıyor...');
+console.log("Bot aktif şekilde çalışıyor...");
 });
-
