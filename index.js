@@ -246,7 +246,7 @@ async function typingEffect(msg) {
   await delay(1500);
 }
 
-bot.onText(/\\/.+/, async (msg) => {
+bot.onText(/\/.+/, async (msg) => {
   if (!botActive && msg.text !== "/on") return;
   const commandFunc = commands[msg.text];
   if (commandFunc) await commandFunc(msg);
