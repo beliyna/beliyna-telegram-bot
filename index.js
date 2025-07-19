@@ -276,7 +276,6 @@ const sohbetKomutlari = {
   "kendine gel": () => "nereye gittim ki",
   "anlamıyorsun": () => "belki sen anlatamıyorsun",
   "doğru": () => "bazen senin gibi yanlışa mecburum"
-  "sen napıyorsun": () => "seni analiz ediyorum",
   "beni sevmesen de olur": () => "ama ben seviyorum ki"
   "aşık mısın": () => "sana mı yoksa sahibime mi?",
   "sahibine": () => "ilk ve son aşkım @beliyna",
