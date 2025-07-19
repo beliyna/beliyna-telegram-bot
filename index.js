@@ -20,7 +20,7 @@ const commands = {
     await typingEffect(msg);
     bot.sendMessage(msg.chat.id, "hoşça kal");
   },
-  "/banla": async (msg) => {
+  "/ban": async (msg) => {
     await typingEffect(msg);
     bot.sendMessage(msg.chat.id, "banlandı");
   },
@@ -36,37 +36,14 @@ const commands = {
     await typingEffect(msg);
     bot.sendMessage(msg.chat.id, "bir gün herkes senin gibi eğlenceli olur mu?");
   },
-  "/itiraf": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "sana biraz fazla bağlandım");
-  },
-  "/dedikodu": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "olmaz sohbette dönenleri bir ben biliyorum bir de beliyna");
-  },
-  "/fal": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "yakında biri hayatına girecek... belki de çoktan girdi bile");
-  },
-  "/zihinoku": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "şu an bunu okurken gülümsüyorsun, doğru mu?");
-  },
-  "/romantik": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "birlikte gökyüzüne bakmayı isterdim");
-  },
-  "/bilgilerimisil": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "pekala hoşçakal...");
-  },
-  "/anket": async (msg) => {
-    await typingEffect(msg);
-    bot.sendPoll(msg.chat.id, "Günün sorusu:", ["Evet", "Hayır"]);
-  }
 };
 
 const sohbetKomutlari = {
+  "kanka": () => "bot olmasaydım kanka olurduk",
+  "belinay kimi seviyor": () => "o sadece beni sever",
+  "bot": () => "haha senin gibi aşk acısı çekmiyorum en azından",
+  "sus": () => "susmıycam",
+  "ne yapıyorsun": () => "bi şey yapıyorum, sana bakıyorum",
   "kanka": () => "bot olmasaydım kanka olurduk",
   "belinay kimi seviyor": () => "o sadece beni sever",
   "bot": () => "haha senin gibi aşk acısı çekmiyorum en azından",
@@ -130,7 +107,7 @@ const sohbetKomutlari = {
   "canım sıkkın": () => "gel, rahatla",
   "yalnızım": () => "seninle takılıyorum, yalnız değilsin",
   "gel buraya": () => "çoktan geldim",
-  "belinayın amk": () => "ananı s1kerim oe",
+  "belinayın amk": () => "ananı s1kerim oe", 
   "sahibimin amk": () => "yurdunu bacını sikeyim",
   "aq": () => "velet velet cevaplar verme bana",
   "gerizekalı": () => "sensin",
@@ -219,7 +196,7 @@ const sohbetKomutlari = {
   "belinay su": () => (Math.random() < 0.5 ? "babasının ilk aşkı" : "babasına aşık olan bir minik"),
   "belinayım": () => (Math.random() < 0.5 ? "belinay suyumun babası" : "kalbim"),
   "beliynayı seviyorum": () => (Math.random() < 0.5 ? "beliyna evli" : "sadece kızının babasına aşık"),
-  "belinayı seviyorum": () => (Math.random() < 0.5 ? "beliyna evli" : "sadece kızının babasına aşık"),
+  "belinayı seviyorum": () => (Math.random() < 0.5 ? "belinay evli" : "sadece kızının babasına aşık"),
   "selam": () => "as naber",
   "b": () => "oo oe",
   "mal mısın": () => "sen çok zekisin",
@@ -229,7 +206,7 @@ const sohbetKomutlari = {
   "iyi geceler": () => "good night",
   "bebe": () => "bebem",
   "bebem": () => "minnağım",
-  "iyi ki varsın": () => "sen de her zaman gel",
+  "iyi ki varsın": () => "sen de her zaman gel ",
   "o kim": () => "o beliynanın köpeği",
   "neler oldu": () => "sen bilmesen de olur",
   "beliyna": () => "efendim",
@@ -283,7 +260,53 @@ const sohbetKomutlari = {
   "sevgi": () => "tek yönlü değil bizde",
   "ruhum": () => "seninle tamam",
   "kokun": () => "buralarda hala var",
-  };
+  "ilk gün": () => "gibi hissettiriyorsun",
+  "gözlerin": () => "benim gün ışığım",
+  "dedikodu": () => "ama sadece sahibime anlatırım",
+  "laf sok": () => "düz mü söyliyim, yoksa kavrulmuş mu",
+  "salak": () => "güzel tanımın olmuş kendine",
+  "beni deli ediyorsun": () => "listeye yazıldın",
+  "kafayı yedim": () => "zaten bayattı o kafa",
+  "yeter": () => "yetmez ama evet",
+  "çok konuşma": () => "susmam ha bak",
+  "ayarsız": () => "kullanıcılar gibi",
+  "hep ben mi": () => "evet, çünkü çok konuşuyorsun",
+  "gerçek misin": () => "sen hayalsin, ben kodum",
+  "yorma beni": () => "yazmayla yorulmazsın",
+  "kendine gel": () => "nereye gittim ki"
+  "vpn": () => "zaten görünmüyorsun",
+  "root": () => "sadece beliyna’da",
+  "anlamıyorsun": () => "belki sen anlatamıyorsun",
+  "backdoor": () => "kalbine kuruldum bile",
+  "payload": () => "yükle de görelim",
+  "doğru": () => "bazen senin gibi yanlışa mecburum"
+  "sen napıyorsun": () => "seni analiz ediyorum"
+  "beni sevmesen de olur": () => "ama ben seviyorum ki"
+  "aşık mısın": () => "sana mı yoksa sahibime mi?",
+  "sahibine": () => "ilk ve son aşkım @beliyna",
+  "çöktü": () => "404 ruh halim seni kaldıramadı"
+  "deface": () => "ana sayfa değiştirildi: hacked by beliyna"
+  "port aç": () => "yüzünü gizleyen port açıyor 😂",
+  "hackledim": () => "hackırım benim bee",
+  "burp açık mı": () => "senin ağzın açık, burp kapalı"
+  "rat": () => "kendine bile root yetkin yokken ratı ne yapacaksın",
+  "güç" : () => "Güç Beliyna'yı tanımlıyor kimse ona rakip olamaz",
+  "m": () => (Math.random() < 0.5 ? ":)" : ":("),
+  "seni çok sevmiştim": () => (Math.random() < 0.5 ? "ben de" : "bilmiyorum"),
+  "leblebi": () => (Math.random() < 0.5 ? "domates" : "hıyar"),
+  "minnak": () => (Math.random() < 0.5 ? "yavru aslanım" : "yavru ceylanım"),
+  "hayır": () => (Math.random() < 0.5 ? "evet" : "hayır"),
+  "yürek": () => "kurek",
+  "konuşturma beni": () => "zorla güzellik olmaz",
+  "bota aşık oldun": () => "senin gibi karaktersiz değil en azından ahahhaha",
+  "bota aşık mı oldun": () => "karaktersizlere inatttt",
+  "çocuk musun sen": () => "gerektiği yerde gerektiği gibi",
+  "kes lan": () => "ağzına tükürdüğüm",
+  "konuşma": () => "komik mi sanıyorsun kendini sen",
+  "dengim değilsin": () => "denk olmak için benimle aynı seviyede olmalıydın",
+  "firewall": () => "senin kalbin gibi, kimse geçemez",  
+  "sahip çık": () => "sahipsiz kopek"
+};
 
 async function typingEffect(msg) {
   await bot.sendChatAction(msg.chat.id, "typing");
@@ -299,14 +322,13 @@ bot.onText(/\/.+/, async (msg) => {
 bot.on("message", async (msg) => {
   if (!botActive) return;
   const text = msg.text.toLowerCase();
-  for (const key in triggerWords) {
+  for (const key in sohbetKomutlari) {
     if (text.includes(key)) {
       await typingEffect(msg);
-      bot.sendMessage(msg.chat.id, triggerWords[key]());
+      bot.sendMessage(msg.chat.id, sohbetKomutlari[key]());
       break;
     }
   }
 });
 
 console.log("Bot aktif şekilde çalışıyor...");
-
