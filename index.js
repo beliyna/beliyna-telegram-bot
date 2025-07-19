@@ -253,7 +253,6 @@ const triggerWords = {
   "of ya": () => "ayy yine mi dert",
   "şuan": () => "şimdi mi yani?",
   "ben geldim": () => "geç kaldın",
-  "seninleyim": () => "hep burdayım",
   "çok komiksin": () => "biliyorum 😌",
   "bi şey diycem": () => "dedin bile",
   "ben hazırım": () => "ben de hep hazırım",
