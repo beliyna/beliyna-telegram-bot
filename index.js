@@ -297,7 +297,6 @@ const triggerWords = {
   "gerçek misin": () => "sen hayalsin, ben kodum",
   "yorma beni": () => "yazmayla yorulmazsın",
   "kendine gel": () => "nereye gittim ki"
-  "firewall": () => "senin kalbin gibi, kimse geçemez",
   "dns": () => "sana resolve edemem",
   "vpn": () => "zaten görünmüyorsun",
   "root": () => "sadece beliyna’da",
@@ -330,7 +329,7 @@ const triggerWords = {
   "kes lan": () => "ağzına tükürdüğüm",
   "konuşma": () => "komik mi sanıyorsun kendini sen",
   "dengim değilsin": () => "denk olmak için benimle aynı seviyede olmalıydın",
-  "sahip çık": () => "sahipsiz köpek"
+  "sahip çık": () => "sahipsiz kopek"
   };
 
 async function typingEffect(msg) {
