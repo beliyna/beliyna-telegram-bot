@@ -9,7 +9,7 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const sohbetKomutlari = {
+const commands = {
   "/on": async (msg) => {
     botActive = true;
     await typingEffect(msg);
@@ -66,7 +66,7 @@ const sohbetKomutlari = {
   }
 };
 
-const triggerWords = {
+const sohbetKomutlari = {
   "kanka": () => "bot olmasaydım kanka olurduk",
   "belinay kimi seviyor": () => "o sadece beni sever",
   "bot": () => "haha senin gibi aşk acısı çekmiyorum en azından",
