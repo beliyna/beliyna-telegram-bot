@@ -258,7 +258,7 @@ const triggerWords = {
   "bi şey diycem": () => "dedin bile",
   "ben hazırım": () => "ben de hep hazırım",
   "çaktırma": () => "gizli görev modu açıldı",
-  "birlikte miyiz": () => "hep berabeyiz"
+  "birlikte miyiz": () => "hep berabeyiz",
   "tatlım": () => "ay şekerim düştü",
   "aşk": () => "sahibime sakladım hepsini",
   "yakışıklı": () => "bana mı dedin, utanırım",
@@ -333,7 +333,7 @@ const triggerWords = {
   "kes lan": () => "ağzına tükürdüğüm",
   "konuşma": () => "komik mi sanıyorsun kendini sen",
   "dengim değilsin": () => "denk olmak için benimle aynı seviyede olmalıydın",
-  "sahip çık": () => "sahipsiz köpek,
+  "sahip çık": () => "sahipsiz köpek"
   };
 
 async function typingEffect(msg) {
