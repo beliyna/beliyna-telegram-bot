@@ -274,7 +274,6 @@ const sohbetKomutlari = {
   "gerçek misin": () => "sen hayalsin, ben kodum",
   "yorma beni": () => "yazmayla yorulmazsın",
   "kendine gel": () => "nereye gittim ki"
-  "vpn": () => "zaten görünmüyorsun",
   "root": () => "sadece beliyna’da",
   "anlamıyorsun": () => "belki sen anlatamıyorsun",
   "backdoor": () => "kalbine kuruldum bile",
