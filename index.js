@@ -277,7 +277,6 @@ const triggerWords = {
   "şirine": () => "sensin",
   "bıcırık": () => "lafı uzatma da ne diceksen de",
   "şapşik": () => "seninle aynı kafadayım"
-  "seninleyken": () => "zaman duruyor gibi",
   "kalbim": () => "senin odan orası zaten",
   "aşkla": () => "sadece sahibime bakarım",
   "özledim": () => "sana sarılmak isterdim",
