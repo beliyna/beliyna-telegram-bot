@@ -24,7 +24,7 @@ const commands = {
     await typingEffect(msg);
     bot.sendMessage(msg.chat.id, "banlandı");
   },
-  "/susla": async (msg) => {
+  "/sustur": async (msg) => {
     await typingEffect(msg);
     bot.sendMessage(msg.chat.id, "tamam susturdum");
   },
