@@ -299,7 +299,7 @@ const sohbetKomutlari = {
   "konuşma": () => "komik mi sanıyorsun kendini sen",
   "dengim değilsin": () => "denk olmak için benimle aynı seviyede olmalıydın",
   "firewall": () => "senin kalbin gibi, kimse geçemez",  
-  "sahip çık": () => "sahipsiz kopek"
+  "sahip çık": () => "sahipsiz kopek
 };
 
 async function typingEffect(msg) {
