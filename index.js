@@ -198,7 +198,6 @@ const sohbetKomutlari = {
   "beliynayı seviyorum": () => (Math.random() < 0.5 ? "beliyna evli" : "sadece kızının babasına aşık"),
   "belinayı seviyorum": () => (Math.random() < 0.5 ? "belinay evli" : "sadece kızının babasına aşık"),
   "selam": () => "as naber",
-  "selin": () => "evet benim",
   "mal mısın": () => "sen çok zekisin",
   "iyi ben de": () => "sevindim",
   "belinay kime aşık": () => "kızının babasına",
