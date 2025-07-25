@@ -1,39 +1,36 @@
-const TelegramBot = require("node-telegram-bot-api");
+const express = require('express');
+const TelegramBot = require('node-telegram-bot-api');
 
-const token = "7934057503:AAGt8OTWbhbJKhnK2QQ3Pmhkzf--3a4zA_U";
-const bot = new TelegramBot(token, { polling: true });
+const token = '8401584812:AAFPZ2eB3l_e_86LjuUxbGBjgon5nCNWRb0'; // <-- Tokenını buraya yaz
+const bot = new TelegramBot(token, { webHook: { port: process.env.PORT || 3000 } });
 
-let botActive = true;
+const app = express();
 
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+// Webhook URL – Render domainine göre değiştir
+const webhookUrl = 'https://beliynasohbet-telegram-bot.onrender.com/bot' + token;
+bot.setWebHook(webhookUrl);
 
-const commands = {
-  "/on": async (msg) => {
-    botActive = true;
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "sohbet başarılıyla başlatıldı");
-  },
-  "/off": async (msg) => {
-    botActive = false;
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "hoşça kal");
-  },
-  "/öv": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "seninle konuşmak komutlarımın en iyi özelliğiydi");
-  },
-  "/eğlendir": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "bir gün herkes senin gibi eğlenceli olur mu?");
-  },
-};
+// Webhook endpoint
+app.use(express.json());
+app.post('/bot' + token, (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
 
+// ✅ Komutlar
+bot.onText(/\/start/, (msg) => {
+  bot.sendMessage(msg.chat.id, 'ben geldim 🖤');
+});
+
+bot.onText(/\/on/, (msg) => {
+  bot.sendMessage(msg.chat.id, 'hazırım');
+});
+
+// ✅ Sohbet komutları (senin stilinle)
 const sohbetKomutlari = {
   "kanka": () => "bot olmasaydım kanka olurduk",
   "belinay kimi seviyor": () => "o sadece beni sever",
-  "bot": () => "haha senin gibi aşk acısı çekmiyorum en azından",
+  "bot": () => "haha en azından senin gibi duygum yok",
   "sus": () => "susmıycam",
   "ne yapıyorsun": () => "bi şey yapıyorum, sana bakıyorum",
   "kanka": () => "bot olmasaydım kanka olurduk",
@@ -294,27 +291,22 @@ const sohbetKomutlari = {
   "sahip çık": () => "sahipsiz kopek"
 };
 
-async function typingEffect(msg) {
-  await bot.sendChatAction(msg.chat.id, "typing");
-  await delay(1500);
-}
+// ✅ Mesajları dinle
+bot.on('message', (msg) => {
+  const text = msg.text?.toLowerCase();
+  const chatId = msg.chat.id;
 
-bot.onText(/\/.+/, async (msg) => {
-  if (!botActive && msg.text !== "/on") return;
-  const commandFunc = commands[msg.text];
-  if (commandFunc) await commandFunc(msg);
-});
+  if (!text || text.startsWith('/')) return;
 
-bot.on("message", async (msg) => {
-  if (!botActive) return;
-  const text = msg.text.toLowerCase();
-  for (const key in sohbetKomutlari) {
-    if (text.includes(key)) {
-      await typingEffect(msg);
-      bot.sendMessage(msg.chat.id, sohbetKomutlari[key]());
-      break;
+  Object.keys(sohbetKomutlari).forEach(kelime => {
+    if (text.includes(kelime)) {
+      const cevap = sohbetKomutlari[kelime]();
+      bot.sendMessage(chatId, cevap);
     }
-  }
+  });
 });
 
-console.log("Bot aktif şekilde çalışıyor...");
+// Sunucuyu başlat
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Bot çalışıyor (webhook aktif)');
+});
