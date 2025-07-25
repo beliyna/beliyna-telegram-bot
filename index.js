@@ -306,7 +306,8 @@ bot.on('message', (msg) => {
   });
 });
 
-// Sunucuyu başlat
-app.listen(process.env.PORT || 3000, () => {
-  console.log('Bot çalışıyor (webhook aktif)');
+const PORT = process.env.PORT || 10001;
+app.listen(PORT, () => {
+  console.log(`Bot aktif: Port ${PORT}`);
 });
+
