@@ -20,14 +20,6 @@ const commands = {
     await typingEffect(msg);
     bot.sendMessage(msg.chat.id, "hoşça kal");
   },
-  "/ban": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "banlandı");
-  },
-  "/sustur": async (msg) => {
-    await typingEffect(msg);
-    bot.sendMessage(msg.chat.id, "tamam susturdum");
-  },
   "/öv": async (msg) => {
     await typingEffect(msg);
     bot.sendMessage(msg.chat.id, "seninle konuşmak komutlarımın en iyi özelliğiydi");
@@ -296,7 +288,9 @@ const sohbetKomutlari = {
   "kes lan": () => "ağzına tükürdüğüm",
   "konuşma": () => "komik mi sanıyorsun kendini sen",
   "dengim değilsin": () => "denk olmak için benimle aynı seviyede olmalıydın",
-  "firewall": () => "senin kalbin gibi, kimse geçemez",  
+  "firewall": () => "senin kalbin gibi, kimse geçemez",
+  "matrix": () => (Math.random() < 0.5 ? "jewel of my heart" : "the rhythm of my heart"),
+  "arı": () => (Math.random() < 0.5 ? "Beliyna's first love" : "Beliyna's last love"), 
   "sahip çık": () => "sahipsiz kopek"
 };
 
