@@ -5,7 +5,7 @@ const token = '8401584812:AAFPZ2eB3l_e_86LjuUxbGBjgon5nCNWRb0'; // <-- Tokenın�
 const bot = new TelegramBot(token, { webHook: { port: process.env.PORT || 3000 } });
 
 const app = express();
-
+ 
 // Webhook URL – Render domainine göre değiştir
 const webhookUrl = 'https://beliynasohbet-telegram-bot.onrender.com/bot' + token;
 bot.setWebHook(webhookUrl);
