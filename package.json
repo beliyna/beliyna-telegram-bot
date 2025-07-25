@@ -1,7 +1,7 @@
 {
-  "name": "beliyna-telegram-bot",
+  "name": "beliynasohbet-telegram-bot",
   "version": "1.0.0",
-  "description": "Telegram grup sohbet botu - Beliyna",
+  "description": "Telegram sohbet botu - Beliyna",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -13,8 +13,5 @@
   },
   "engines": {
     "node": ">=16"
-  },
-  "keywords": [],
-  "author": "Beliyna",
-  "license": "MIT"
+  }
 }
